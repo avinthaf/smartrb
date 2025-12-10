@@ -63,6 +63,54 @@ func handleGetFlashcardsByDeckId(c *gin.Context) {
 
 }
 
+func handleGetFlashcardScoresBySessionId(c *gin.Context) {
+	// Check authorization and get user ID
+	userId, ok := checkAuthorization(c)
+	if !ok {
+		// checkAuthorization already sent the error response
+		return
+	}
+
+	// Validate user ID is not empty
+	if userId == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+
+	// Get user by external id
+	user, err := users.GetUserByExternalId(userId, db.Default())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get user by external id",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Validate user ID from database
+	if user.Id == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	sessionId := c.Param("sessionId")
+
+	flashcardScores, err := flashcards.GetFlashcardScoresBySessionId(db.Default(), sessionId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get flashcard scores",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, flashcardScores)
+}
+
 func handleCreateFlashcardDeckSession(c *gin.Context) {
 	// Check authorization and get user ID
 	userId, ok := checkAuthorization(c)

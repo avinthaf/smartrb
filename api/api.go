@@ -72,6 +72,7 @@ func StartAPI() {
 		// Flashcard Routes
 		protected.GET("/flashcard_decks", handleGetFlashcardDecks)
 		protected.GET("/flashcard_decks/:deckId", handleGetFlashcardsByDeckId)
+		protected.GET("/flashcard_decks/sessions/:sessionId/scores", handleGetFlashcardScoresBySessionId)
 		protected.POST("/flashcard_decks/:deckId/sessions/:sessionId", handleCreateFlashcardDeckSession)
 		protected.POST("/flashcard_scores", handleCreateFlashcardScore)
 
