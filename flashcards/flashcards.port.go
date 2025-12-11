@@ -17,12 +17,21 @@ type FlashcardScoreRequest struct {
 	SessionId string `json:"session_id"`
 }
 
+type FlashcardDeckSessionRequest struct {
+	DeckId    string `json:"deck_id"`
+	SessionId string `json:"session_id"`
+}
+
 func GetFlashcardDecks(db *sql.DB) ([]FlashcardDeck, error) {
 	return getFlashcardDecksService(db)
 }
 
 func GetFlashcardsByDeckId(db *sql.DB, deckId string) (GetFlashcardsByDeckIdResult, error) {
 	return getFlashcardsByDeckIdService(db, deckId)
+}
+
+func GetFlashcardDeckSessionsByUserId(db *sql.DB, userId string) ([]FlashcardDeckSession, error) {
+	return getFlashcardDeckSessionsByUserIdService(db, userId)
 }
 
 func GetFlashcardScoresBySessionId(db *sql.DB, sessionId string) ([]FlashcardScore, error) {

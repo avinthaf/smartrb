@@ -6,11 +6,15 @@ func getPrimaryCategoriesService(db *sql.DB) ([]Category, error) {
 	return getPrimaryCategories(db)
 }
 
-func getProductsCategoriesByProductIdService(productId string, db *sql.DB) ([]ProductsCategories, error) {
-	return getProductsCategoriesByProductId(productId, db)
+func getCategoriesByIdsService(categoryIds []string, db *sql.DB) ([]Category, error) {
+	return getCategoriesByIds(categoryIds, db)
 }
 
-func getProductsCategoriesByProductIdsService(productIds []string, db *sql.DB) ([]ProductsCategories, error) {
-	return getProductsCategoriesByProductIds(productIds, db)
+func getProductCategoriesByProductIdService(productId string, db *sql.DB) ([]ProductCategory, error) {
+	return getProductCategoriesByProductId(productId, db)
+}
+
+func getProductCategoriesByProductIdsService(productIds []string, db *sql.DB) ([]ProductCategory, error) {
+	return getProductCategoriesByProductIds(productIds, db)
 }
 

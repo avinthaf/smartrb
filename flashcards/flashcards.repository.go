@@ -172,6 +172,46 @@ func getFlashcardDeckById(db *sql.DB, deckId string) (FlashcardDeck, error) {
 	return deck, nil
 }
 
+func getFlashcardDeckSessionsByUserId(db *sql.DB, userId string) ([]FlashcardDeckSession, error) {
+	query := `
+        SELECT 
+            id, 
+            deck_id, 
+            user_id,
+            created_at, 
+            updated_at 
+        FROM flashcard_deck_sessions
+        WHERE user_id = $1
+    `
+	rows, err := db.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var sessions []FlashcardDeckSession
+	for rows.Next() {
+		var session FlashcardDeckSession
+		err := rows.Scan(
+			&session.Id,
+			&session.DeckId,
+			&session.UserId,
+			&session.CreatedAt,
+			&session.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		sessions = append(sessions, session)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return sessions, nil
+}
+
 func getFlashcardScoresBySessionId(db *sql.DB, sessionId string) ([]FlashcardScore, error) {
 	query := `
         SELECT 

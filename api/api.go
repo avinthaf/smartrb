@@ -70,11 +70,18 @@ func StartAPI() {
 		protected.POST("/interests", handleCreateInterests)
 
 		// Flashcard Routes
-		protected.GET("/flashcard_decks", handleGetFlashcardDecks)
-		protected.GET("/flashcard_decks/:deckId", handleGetFlashcardsByDeckId)
-		protected.GET("/flashcard_decks/sessions/:sessionId/scores", handleGetFlashcardScoresBySessionId)
-		protected.POST("/flashcard_decks/:deckId/sessions/:sessionId", handleCreateFlashcardDeckSession)
-		protected.POST("/flashcard_scores", handleCreateFlashcardScore)
+		protected.GET("/flashcard-decks/:deckId/flashcards", handleGetFlashcardsByDeckId)
+
+		// Flashcard Deck Routes
+		protected.GET("/flashcard-decks", handleGetFlashcardDecks)
+
+		// Flashcard Deck Session Routes
+		protected.GET("/flashcard-decks/sessions", handleGetFlashcardDeckSessionsByUserId)
+		protected.POST("/flashcard-decks/sessions", handleCreateFlashcardDeckSession)
+
+		// Flashcard Deck Session Score Routes
+		protected.GET("/flashcard-decks/sessions/:sessionId/scores", handleGetFlashcardScoresBySessionId)
+		protected.POST("/flashcard-decks/sessions/:sessionId/scores", handleCreateFlashcardScore)
 
 		// // Gen UI
 		// protected.POST("/gen_ui/courses/activities", handleCourseActvitiyGenUIPrompt)

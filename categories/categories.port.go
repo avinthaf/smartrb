@@ -9,10 +9,14 @@ func GetPrimaryCategories(db *sql.DB) ([]Category, error) {
 	return getPrimaryCategoriesService(db)
 }
 
-func GetProductsCategoriesByProductId(productId string, db *sql.DB) ([]ProductsCategories, error) {
-	return getProductsCategoriesByProductIdService(productId, db)
+func GetCategoriesByIds(categoryIds []string, db *sql.DB) ([]Category, error) {
+	return getCategoriesByIdsService(categoryIds, db)
 }
 
-func GetProductsCategoriesByProductIds(productIds []string, db *sql.DB) ([]ProductsCategories, error) {
-	return getProductsCategoriesByProductIdsService(productIds, db)
+func GetProductCategoriesByProductId(productId string, db *sql.DB) ([]ProductCategory, error) {
+	return getProductCategoriesByProductIdService(productId, db)
+}
+
+func GetProductCategoriesByProductIds(productIds []string, db *sql.DB) ([]ProductCategory, error) {
+	return getProductCategoriesByProductIdsService(productIds, db)
 }

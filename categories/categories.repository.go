@@ -2,6 +2,8 @@ package categories
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 )
 
 func getPrimaryCategories(db *sql.DB) ([]Category, error) {
@@ -47,7 +49,60 @@ func getPrimaryCategories(db *sql.DB) ([]Category, error) {
 	return categories, nil
 }
 
-func getProductsCategoriesByProductId(productId string, db *sql.DB) ([]ProductsCategories, error) {
+func getCategoriesByIds(categoryIds []string, db *sql.DB) ([]Category, error) {
+	// Convert string slice to postgres array format
+	placeholders := make([]string, len(categoryIds))
+	args := make([]interface{}, len(categoryIds))
+	
+	for i, id := range categoryIds {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = id
+	}
+	
+	query := fmt.Sprintf(`
+        SELECT 
+            id, 
+            name, 
+            description, 
+            COALESCE(image_url, '') as image_url, 
+            created_at, 
+            updated_at 
+        FROM categories 
+        WHERE id IN (%s)`, strings.Join(placeholders, ","))
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+
+		err := rows.Scan(
+			&category.Id,
+			&category.Name,
+			&category.Description,
+			&category.ImageUrl,
+			&category.CreatedAt,
+			&category.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		categories = append(categories, category)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
+
+func getProductCategoriesByProductId(productId string, db *sql.DB) ([]ProductCategory, error) {
 	query := `
         SELECT 
             id, 
@@ -55,7 +110,7 @@ func getProductsCategoriesByProductId(productId string, db *sql.DB) ([]ProductsC
             category_id, 
             created_at, 
             updated_at 
-        FROM products_categories 
+        FROM product_categories 
         WHERE product_id = $1`
 
 	rows, err := db.Query(query, productId)
@@ -64,9 +119,9 @@ func getProductsCategoriesByProductId(productId string, db *sql.DB) ([]ProductsC
 	}
 	defer rows.Close()
 
-	var productsCategories []ProductsCategories
+	var productsCategories []ProductCategory
 	for rows.Next() {
-		var productCategory ProductsCategories
+		var productCategory ProductCategory
 
 		err := rows.Scan(
 			&productCategory.Id,
@@ -84,26 +139,34 @@ func getProductsCategoriesByProductId(productId string, db *sql.DB) ([]ProductsC
 	return productsCategories, nil
 }
 
-func getProductsCategoriesByProductIds(productIds []string, db *sql.DB) ([]ProductsCategories, error) {
-	query := `
+func getProductCategoriesByProductIds(productIds []string, db *sql.DB) ([]ProductCategory, error) {
+	// Convert string slice to postgres array format
+	placeholders := make([]string, len(productIds))
+	args := make([]interface{}, len(productIds))
+
+	for i, id := range productIds {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = id
+	}
+
+	query := fmt.Sprintf(`
         SELECT 
             id, 
             product_id, 
             category_id, 
-            created_at, 
-            updated_at 
-        FROM products_categories 
-        WHERE product_id IN ($1)`
+            created_at
+        FROM product_categories 
+        WHERE product_id IN (%s)`, strings.Join(placeholders, ","))
 
-	rows, err := db.Query(query, productIds)
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var productsCategories []ProductsCategories
+	var productsCategories []ProductCategory
 	for rows.Next() {
-		var productCategory ProductsCategories
+		var productCategory ProductCategory
 
 		err := rows.Scan(
 			&productCategory.Id,
@@ -116,6 +179,10 @@ func getProductsCategoriesByProductIds(productIds []string, db *sql.DB) ([]Produ
 		}
 
 		productsCategories = append(productsCategories, productCategory)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return productsCategories, nil

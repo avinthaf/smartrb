@@ -10,6 +10,10 @@ func getFlashcardsByDeckIdService(db *sql.DB, deckId string) (GetFlashcardsByDec
 	return getFlashcardsByDeckId(db, deckId)
 }
 
+func getFlashcardDeckSessionsByUserIdService(db *sql.DB, userId string) ([]FlashcardDeckSession, error) {
+	return getFlashcardDeckSessionsByUserId(db, userId)
+}
+
 func getFlashcardScoresBySessionIdService(db *sql.DB, sessionId string) ([]FlashcardScore, error) {
 	return getFlashcardScoresBySessionId(db, sessionId)
 }

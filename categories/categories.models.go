@@ -12,7 +12,7 @@ type Category struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type ProductsCategories struct {
+type ProductCategory struct {
 	Id string `json:"id"`
 	ProductId string `json:"product_id"`
 	CategoryId string `json:"category_id"`
