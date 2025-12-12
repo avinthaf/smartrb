@@ -252,10 +252,12 @@ func getFillInBlankScoresBySessionId(db *sql.DB, sessionId string) ([]FillInBlan
 }
 
 func createFillInBlankDeckSession(db *sql.DB, id string, deckId string, userId string) (FillInBlankDeckSession, error) {
-	// First, insert the new session
+	// Use UPSERT to handle existing sessions gracefully
 	query := `
         INSERT INTO fill_in_blank_deck_sessions (id, deck_id, user_id)
         VALUES ($1, $2, $3)
+        ON CONFLICT (id) DO UPDATE SET 
+            updated_at = CURRENT_TIMESTAMP
         RETURNING id, deck_id, user_id, created_at, updated_at
     `
 	

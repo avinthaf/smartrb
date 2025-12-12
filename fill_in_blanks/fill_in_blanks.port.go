@@ -45,8 +45,7 @@ func GetFillInBlankScoresBySessionId(db *sql.DB, sessionId string) ([]FillInBlan
 }
 
 func CreateFillInBlankDeckSession(db *sql.DB, request FillInBlankDeckSessionRequest, userId string) (FillInBlankDeckSession, error) {
-	id := generateId()
-	return createFillInBlankDeckSessionService(db, id, request.DeckId, userId)
+	return createFillInBlankDeckSessionService(db, request.SessionId, request.DeckId, userId)
 }
 
 func CreateFillInBlankScore(db *sql.DB, request FillInBlankScoreRequest, userId string) error {
