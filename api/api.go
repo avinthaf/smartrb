@@ -83,6 +83,14 @@ func StartAPI() {
 		protected.GET("/flashcard-decks/sessions/:sessionId/scores", handleGetFlashcardScoresBySessionId)
 		protected.POST("/flashcard-decks/sessions/:sessionId/scores", handleCreateFlashcardScore)
 
+		// Fill In Blank Routes
+		protected.GET("/fill_in_blank_decks", handleGetFillInBlankDecks)
+		protected.GET("/fill_in_blank_decks/:deckId/fill_in_blanks", handleGetFillInBlanksByDeckId)
+		protected.GET("/fill_in_blank_decks/sessions", handleGetFillInBlankDeckSessionsByUserId)
+		protected.POST("/fill_in_blank_decks/sessions", handleCreateFillInBlankDeckSession)
+		protected.GET("/fill_in_blank_decks/sessions/:sessionId/scores", handleGetFillInBlankScoresBySessionId)
+		protected.POST("/fill_in_blank_decks/sessions/:sessionId/scores", handleCreateFillInBlankScore)
+
 		// // Gen UI
 		// protected.POST("/gen_ui/courses/activities", handleCourseActvitiyGenUIPrompt)
 	}

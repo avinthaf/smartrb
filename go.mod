@@ -18,6 +18,7 @@ require (
 	smartrb.com/api v0.0.0-00010101000000-000000000000
 	smartrb.com/categories v0.0.0-00010101000000-000000000000
 	smartrb.com/db v0.0.0-00010101000000-000000000000
+	smartrb.com/fill_in_blanks v0.0.0-00010101000000-000000000000
 	smartrb.com/flashcards v0.0.0-00010101000000-000000000000
 	smartrb.com/interests v0.0.0-00010101000000-000000000000
 	smartrb.com/mq v0.0.0-00010101000000-000000000000
@@ -77,3 +78,5 @@ replace smartrb.com/categories => ./categories
 replace smartrb.com/interests => ./interests
 
 replace smartrb.com/flashcards => ./flashcards
+
+replace smartrb.com/fill_in_blanks => ./fill_in_blanks

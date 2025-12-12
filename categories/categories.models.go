@@ -12,6 +12,7 @@ type Category struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// TODO: move to separate product_categories domain
 type ProductCategory struct {
 	Id string `json:"id"`
 	ProductId string `json:"product_id"`

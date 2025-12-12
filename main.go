@@ -17,6 +17,7 @@ import (
 	_ "smartrb.com/categories"
 	_ "smartrb.com/interests"
 	_ "smartrb.com/flashcards"
+	_ "smartrb.com/fill_in_blanks"
 )
 
 func main() {
