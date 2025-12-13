@@ -22,6 +22,10 @@ func createFlashcardDeckService(db *sql.DB, title string, description string, us
 	return createFlashcardDeck(db, title, description, userId, publishStatus)
 }
 
+func createFlashcardsService(db *sql.DB, deckId string, flashcards []Flashcard) error {
+	return createFlashcards(db, deckId, flashcards)
+}
+
 func createFlashcardDeckSessionService(db *sql.DB, id string, deckId string, userId string) (FlashcardDeckSession, error) {
 	return createFlashcardDeckSession(db, id, deckId, userId)
 }

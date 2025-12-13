@@ -93,7 +93,7 @@ func StartAPI() {
 		protected.POST("/fill_in_blank_decks/sessions/:sessionId/scores", handleCreateFillInBlankScore)
 
 		// Gen AI Routes
-		protected.POST("/gen_ai/prompt", handleGenAIPrompt)
+		protected.POST("/gen_ai/prompt/flashcards", handleFlashcardsGenAIPrompt)
 
 	}
 

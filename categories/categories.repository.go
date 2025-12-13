@@ -6,6 +6,56 @@ import (
 	"strings"
 )
 
+func getAllCategories(db *sql.DB) ([]Category, error) {
+	query := `
+	SELECT 
+		id, 
+		name, 
+		description, 
+		COALESCE(image_url, '') as image_url, 
+		parent_id,
+		created_at, 
+		updated_at 
+	FROM categories
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+		var parentId *string // Use pointer to handle NULL values
+
+		err := rows.Scan(
+			&category.Id,
+			&category.Name,
+			&category.Description,
+			&category.ImageUrl,
+			&parentId,
+			&category.CreatedAt,
+			&category.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert nullable parent_id to string
+		if parentId != nil {
+			category.ParentId = *parentId
+		} else {
+			category.ParentId = ""
+		}
+
+		categories = append(categories, category)
+	}
+
+	return categories, nil
+}
+
 func getPrimaryCategories(db *sql.DB) ([]Category, error) {
 	query := `
         SELECT 
@@ -53,12 +103,12 @@ func getCategoriesByIds(categoryIds []string, db *sql.DB) ([]Category, error) {
 	// Convert string slice to postgres array format
 	placeholders := make([]string, len(categoryIds))
 	args := make([]interface{}, len(categoryIds))
-	
+
 	for i, id := range categoryIds {
 		placeholders[i] = fmt.Sprintf("$%d", i+1)
 		args[i] = id
 	}
-	
+
 	query := fmt.Sprintf(`
         SELECT 
             id, 
@@ -186,4 +236,16 @@ func getProductCategoriesByProductIds(productIds []string, db *sql.DB) ([]Produc
 	}
 
 	return productsCategories, nil
+}
+
+func createProductCategory(db *sql.DB, productID string, categoryID string) error {
+	query := `
+        INSERT INTO product_categories (product_id, category_id, created_at, updated_at)
+        VALUES ($1, $2, NOW(), NOW())`
+
+	_, err := db.Exec(query, productID, categoryID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

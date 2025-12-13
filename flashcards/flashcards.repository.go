@@ -281,6 +281,32 @@ func createFlashcardDeck(db *sql.DB, title string, description string, userId st
 	return deck, nil
 }
 
+func createFlashcards(db *sql.DB, deckId string, flashcards []Flashcard) error {
+	if len(flashcards) == 0 {
+		return nil
+	}
+
+	query := `
+        INSERT INTO flashcards (deck_id, term, definition)
+        VALUES `
+	
+	var args []interface{}
+	for i, card := range flashcards {
+		if i > 0 {
+			query += ","
+		}
+		query += fmt.Sprintf(" ($%d, $%d, $%d)", i*3+1, i*3+2, i*3+3)
+		args = append(args, deckId, card.Term, card.Definition)
+	}
+	
+	_, err := db.Exec(query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to create flashcards: %v", err)
+	}
+	
+	return nil
+}
+
 func createFlashcardDeckSession(db *sql.DB, id string, deckId string, userId string) (FlashcardDeckSession, error) {
 	// First, insert the new session
 	query := `
