@@ -74,6 +74,7 @@ func StartAPI() {
 
 		// Flashcard Deck Routes
 		protected.GET("/flashcard-decks", handleGetFlashcardDecks)
+		protected.POST("/flashcard-decks", handleCreateFlashcardDeck)
 
 		// Flashcard Deck Session Routes
 		protected.GET("/flashcard-decks/sessions", handleGetFlashcardDeckSessionsByUserId)
@@ -91,8 +92,9 @@ func StartAPI() {
 		protected.GET("/fill_in_blank_decks/sessions/:sessionId/scores", handleGetFillInBlankScoresBySessionId)
 		protected.POST("/fill_in_blank_decks/sessions/:sessionId/scores", handleCreateFillInBlankScore)
 
-		// // Gen UI
-		// protected.POST("/gen_ui/courses/activities", handleCourseActvitiyGenUIPrompt)
+		// Gen AI Routes
+		protected.POST("/gen_ai/prompt", handleGenAIPrompt)
+
 	}
 
 	router.Run(":8080")

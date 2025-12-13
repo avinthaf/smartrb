@@ -6,21 +6,21 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"smartrb.com/categories"
 	"smartrb.com/db"
 	"smartrb.com/fill_in_blanks"
 	"smartrb.com/users"
-	"smartrb.com/categories"
 )
 
 type FillInBlankDeckWithCategory struct {
-	Id            string                   `json:"id"`
-	Title         string                   `json:"title"`
-	Description   string                   `json:"description"`
-	UserId        *string                  `json:"user_id,omitempty"`
-	PublishStatus string                   `json:"publish_status"`
-	CreatedAt     time.Time                `json:"created_at"`
-	UpdatedAt     time.Time                `json:"updated_at"`
-	Categories    []*categories.Category    `json:"categories,omitempty"`
+	Id            string                 `json:"id"`
+	Title         string                 `json:"title"`
+	Description   string                 `json:"description"`
+	UserId        *string                `json:"user_id,omitempty"`
+	PublishStatus string                 `json:"publish_status"`
+	CreatedAt     time.Time              `json:"created_at"`
+	UpdatedAt     time.Time              `json:"updated_at"`
+	Categories    []*categories.Category `json:"categories,omitempty"`
 }
 
 func handleGetFillInBlankDecks(c *gin.Context) {
@@ -66,11 +66,8 @@ func handleGetFillInBlankDecks(c *gin.Context) {
 		return
 	}
 
-	// Create a new fill in blank deck struct with category
-	var fillInBlankDecksWithCategory []FillInBlankDeckWithCategory
-
 	// Initialize the slice with the correct length
-	fillInBlankDecksWithCategory = make([]FillInBlankDeckWithCategory, len(fillInBlankDecks))
+	fillInBlankDecksWithCategory := make([]FillInBlankDeckWithCategory, len(fillInBlankDecks))
 
 	// Match categories to fillInBlankDecks
 	// productCategories product id maps to fillInBlankDeck id and category id maps to category id
@@ -81,7 +78,7 @@ func handleGetFillInBlankDecks(c *gin.Context) {
 			Title:         fillInBlankDecks[i].Title,
 			Description:   fillInBlankDecks[i].Description,
 			UserId:        fillInBlankDecks[i].UserId,
-			PublishStatus: fillInBlankDecks[i].PublishStatus,
+			PublishStatus: fillInBlankDecks[i].PublishStatusId,
 			CreatedAt:     fillInBlankDecks[i].CreatedAt,
 			UpdatedAt:     fillInBlankDecks[i].UpdatedAt,
 			Categories:    []*categories.Category{}, // Initialize empty pointer slice

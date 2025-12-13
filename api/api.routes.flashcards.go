@@ -6,21 +6,21 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"smartrb.com/categories"
 	"smartrb.com/db"
 	"smartrb.com/flashcards"
 	"smartrb.com/users"
-	"smartrb.com/categories"
 )
 
 type FlashcardDeckWithCategory struct {
-	Id            string                   `json:"id"`
-	Title         string                   `json:"title"`
-	Description   *string                  `json:"description,omitempty"`
-	UserId        *string                  `json:"user_id,omitempty"`
-	PublishStatus string                   `json:"publish_status"`
-	CreatedAt     time.Time                `json:"created_at"`
-	UpdatedAt     time.Time                `json:"updated_at"`
-	Categories    []*categories.Category    `json:"categories,omitempty"`
+	Id            string                 `json:"id"`
+	Title         string                 `json:"title"`
+	Description   *string                `json:"description,omitempty"`
+	UserId        *string                `json:"user_id,omitempty"`
+	PublishStatus string                 `json:"publish_status"`
+	CreatedAt     time.Time              `json:"created_at"`
+	UpdatedAt     time.Time              `json:"updated_at"`
+	Categories    []*categories.Category `json:"categories,omitempty"`
 }
 
 func handleGetFlashcardDecks(c *gin.Context) {
@@ -67,10 +67,8 @@ func handleGetFlashcardDecks(c *gin.Context) {
 	}
 
 	// Create a new flashcard deck struct with category
-	var flashcardDecksWithCategory []FlashcardDeckWithCategory
-
 	// Initialize the slice with the correct length
-	flashcardDecksWithCategory = make([]FlashcardDeckWithCategory, len(flashcardDecks))
+	flashcardDecksWithCategory := make([]FlashcardDeckWithCategory, len(flashcardDecks))
 
 	// Match categories to flashcardDecks
 	// productCategories product id maps to flashcardDeck id and category id maps to category id
@@ -81,7 +79,7 @@ func handleGetFlashcardDecks(c *gin.Context) {
 			Title:         flashcardDecks[i].Title,
 			Description:   flashcardDecks[i].Description,
 			UserId:        flashcardDecks[i].UserId,
-			PublishStatus: flashcardDecks[i].PublishStatus,
+			PublishStatus: flashcardDecks[i].PublishStatusId,
 			CreatedAt:     flashcardDecks[i].CreatedAt,
 			UpdatedAt:     flashcardDecks[i].UpdatedAt,
 			Categories:    []*categories.Category{}, // Initialize empty pointer slice
@@ -217,6 +215,65 @@ func handleGetFlashcardScoresBySessionId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, flashcardScores)
+}
+
+func handleCreateFlashcardDeck(c *gin.Context) {
+	// Check authorization and get user ID
+	userId, ok := checkAuthorization(c)
+	if !ok {
+		// checkAuthorization already sent the error response
+		return
+	}
+
+	// Validate user ID is not empty
+	if userId == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+
+	// Get user by external id
+	user, err := users.GetUserByExternalId(userId, db.Default())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get user by external id",
+			"details": err.Error(),
+		})
+		return
+
+	}
+
+	// Validate user ID from database
+	if user.Id == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	// Parse request body
+	var deckReq flashcards.CreateFlashcardDeckRequest
+
+	if err := c.ShouldBindJSON(&deckReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid flashcard deck request",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	flashcardDeck, err := flashcards.CreateFlashcardDeck(db.Default(), user.Id, deckReq.Title, deckReq.Description, deckReq.PublishStatus)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create flashcard deck",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, flashcardDeck)
+
 }
 
 func handleCreateFlashcardDeckSession(c *gin.Context) {

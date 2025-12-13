@@ -18,6 +18,10 @@ func getFlashcardScoresBySessionIdService(db *sql.DB, sessionId string) ([]Flash
 	return getFlashcardScoresBySessionId(db, sessionId)
 }
 
+func createFlashcardDeckService(db *sql.DB, title string, description string, userId string, publishStatus string) (FlashcardDeck, error) {
+	return createFlashcardDeck(db, title, description, userId, publishStatus)
+}
+
 func createFlashcardDeckSessionService(db *sql.DB, id string, deckId string, userId string) (FlashcardDeckSession, error) {
 	return createFlashcardDeckSession(db, id, deckId, userId)
 }

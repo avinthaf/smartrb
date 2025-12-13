@@ -3,13 +3,13 @@ package flashcards
 import "time"
 
 type FlashcardDeck struct {
-	Id            string    `json:"id"`
-	Title         string    `json:"title"`
-	Description   *string   `json:"description,omitempty"`
-	UserId        *string   `json:"user_id,omitempty"`
-	PublishStatus string    `json:"publish_status"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	Id              string    `json:"id"`
+	Title           string    `json:"title"`
+	Description     *string   `json:"description,omitempty"`
+	UserId          *string   `json:"user_id,omitempty"`
+	PublishStatusId string    `json:"publish_status_id"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 type Flashcard struct {

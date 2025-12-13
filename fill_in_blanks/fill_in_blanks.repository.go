@@ -13,7 +13,7 @@ func getFillInBlankDecks(db *sql.DB) ([]FillInBlankDeck, error) {
             title, 
             description, 
             user_id, 
-            publish_status,
+            publish_status_id,
             created_at, 
             updated_at 
         FROM fill_in_blank_decks
@@ -34,7 +34,7 @@ func getFillInBlankDecks(db *sql.DB) ([]FillInBlankDeck, error) {
 			&deck.Title,
 			&deck.Description,
 			&userID,
-			&deck.PublishStatus,
+			&deck.PublishStatusId,
 			&deck.CreatedAt,
 			&deck.UpdatedAt,
 		)
@@ -124,7 +124,7 @@ func getFillInBlankDeckById(db *sql.DB, deckId string) (FillInBlankDeck, error) 
             title, 
             description, 
             user_id, 
-            publish_status,
+            publish_status_id,
             created_at, 
             updated_at 
         FROM fill_in_blank_decks
@@ -145,7 +145,7 @@ func getFillInBlankDeckById(db *sql.DB, deckId string) (FillInBlankDeck, error) 
 			&deck.Title,
 			&deck.Description,
 			&userID,
-			&deck.PublishStatus,
+			&deck.PublishStatusId,
 			&deck.CreatedAt,
 			&deck.UpdatedAt,
 		)

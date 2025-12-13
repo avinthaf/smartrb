@@ -12,7 +12,7 @@ func getFlashcardDecks(db *sql.DB) ([]FlashcardDeck, error) {
             title, 
             description, 
             user_id, 
-            publish_status,
+            publish_status_id,
             created_at, 
             updated_at 
         FROM flashcard_decks
@@ -36,7 +36,7 @@ func getFlashcardDecks(db *sql.DB) ([]FlashcardDeck, error) {
 			&deck.Title,
 			&description,
 			&userID,
-			&deck.PublishStatus,
+			&deck.PublishStatusId,
 			&deck.CreatedAt,
 			&deck.UpdatedAt,
 		)
@@ -122,7 +122,7 @@ func getFlashcardDeckById(db *sql.DB, deckId string) (FlashcardDeck, error) {
             title, 
             description, 
             user_id, 
-            publish_status,
+            publish_status_id,
             created_at, 
             updated_at 
         FROM flashcard_decks
@@ -146,7 +146,7 @@ func getFlashcardDeckById(db *sql.DB, deckId string) (FlashcardDeck, error) {
 			&deck.Title,
 			&description,
 			&userID,
-			&deck.PublishStatus,
+			&deck.PublishStatusId,
 			&deck.CreatedAt,
 			&deck.UpdatedAt,
 		)
@@ -254,6 +254,31 @@ func getFlashcardScoresBySessionId(db *sql.DB, sessionId string) ([]FlashcardSco
 	}
 
 	return scores, nil
+}
+
+func createFlashcardDeck(db *sql.DB, title string, description string, userId string, publishStatus string) (FlashcardDeck, error) {
+	query := `
+        INSERT INTO flashcard_decks (title, description, user_id, publish_status_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, title, description, user_id, publish_status_id, created_at, updated_at
+    `
+	
+	var deck FlashcardDeck
+	err := db.QueryRow(query, title, description, userId, publishStatus).Scan(
+		&deck.Id,
+		&deck.Title,
+		&deck.Description,
+		&deck.UserId,
+		&deck.PublishStatusId,
+		&deck.CreatedAt,
+		&deck.UpdatedAt,
+	)
+
+	if err != nil {
+		return FlashcardDeck{}, fmt.Errorf("failed to create flashcard deck: %v", err)
+	}
+
+	return deck, nil
 }
 
 func createFlashcardDeckSession(db *sql.DB, id string, deckId string, userId string) (FlashcardDeckSession, error) {
