@@ -52,3 +52,11 @@ func CreateFillInBlankScore(db *sql.DB, request FillInBlankScoreRequest, userId 
 	return createFillInBlankScoreService(db, userId, request.FillInBlankId, request.Score, request.SessionId)
 }
 
+func CreateFillInBlankDeck(db *sql.DB, title string, description string, userId string) (FillInBlankDeck, error) {
+	return createFillInBlankDeckService(db, title, description, userId)
+}
+
+func CreateFillInBlanks(db *sql.DB, request CreateFillInBlanksRequest) error {
+	return createFillInBlanksService(db, request)
+}
+

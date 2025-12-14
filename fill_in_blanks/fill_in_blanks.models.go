@@ -39,3 +39,15 @@ type FillInBlankScore struct {
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 }
+
+type CreateFillInBlankDeckRequest struct {
+	Title        string        `json:"title"`
+	Description  string        `json:"description"`
+	CategoryIds  []string      `json:"category_ids"`
+	FillInBlanks []FillInBlank `json:"fill_in_blanks"`
+}
+
+type CreateFillInBlanksRequest struct {
+	DeckId       string        `json:"deck_id"`
+	FillInBlanks []FillInBlank `json:"fill_in_blanks"`
+}

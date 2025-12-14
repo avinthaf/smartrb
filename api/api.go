@@ -86,6 +86,8 @@ func StartAPI() {
 
 		// Fill In Blank Routes
 		protected.GET("/fill_in_blank_decks", handleGetFillInBlankDecks)
+		protected.POST("/fill_in_blank_decks", handleCreateFillInBlankDeck)
+
 		protected.GET("/fill_in_blank_decks/:deckId/fill_in_blanks", handleGetFillInBlanksByDeckId)
 		protected.GET("/fill_in_blank_decks/sessions", handleGetFillInBlankDeckSessionsByUserId)
 		protected.POST("/fill_in_blank_decks/sessions", handleCreateFillInBlankDeckSession)
@@ -94,6 +96,7 @@ func StartAPI() {
 
 		// Gen AI Routes
 		protected.POST("/gen_ai/prompt/flashcards", handleFlashcardsGenAIPrompt)
+		protected.POST("/gen_ai/prompt/fill_in_blanks", handleFillInBlanksGenAIPrompt)
 
 	}
 

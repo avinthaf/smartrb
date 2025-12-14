@@ -288,3 +288,78 @@ func createFillInBlankScore(db *sql.DB, userId string, fillInBlankId string, sco
 	}
 	return nil
 }
+
+func createFillInBlankDeck(db *sql.DB, title string, description string, userId string) (FillInBlankDeck, error) {
+	query := `
+        INSERT INTO fill_in_blank_decks (title, description, user_id, publish_status_id)
+        VALUES ($1, $2, $3, (SELECT id FROM publish_statuses WHERE name = 'draft'))
+        RETURNING id, title, description, user_id, publish_status_id, created_at, updated_at
+    `
+	
+	var deck FillInBlankDeck
+	var userID sql.NullString
+	
+	err := db.QueryRow(query, title, description, userId).Scan(
+		&deck.Id,
+		&deck.Title,
+		&deck.Description,
+		&userID,
+		&deck.PublishStatusId,
+		&deck.CreatedAt,
+		&deck.UpdatedAt,
+	)
+
+	if err != nil {
+		return FillInBlankDeck{}, fmt.Errorf("failed to create fill in blank deck: %v", err)
+	}
+
+	// Handle NULL values
+	if userID.Valid {
+		deck.UserId = &userID.String
+	}
+
+	return deck, nil
+}
+
+func createFillInBlanks(db *sql.DB, deckId string, fillInBlanks []FillInBlank) error {
+	if len(fillInBlanks) == 0 {
+		return nil
+	}
+
+	// Begin transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %v", err)
+	}
+	defer tx.Rollback()
+
+	// Prepare the insert statement
+	stmt, err := tx.Prepare(`
+        INSERT INTO fill_in_blanks (deck_id, prompt, answers, explanation)
+        VALUES ($1, $2, $3, $4)
+    `)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %v", err)
+	}
+	defer stmt.Close()
+
+	// Insert each fill in the blank
+	for _, fillInBlank := range fillInBlanks {
+		_, err := stmt.Exec(
+			deckId,
+			fillInBlank.Prompt,
+			pq.Array(fillInBlank.Answers),
+			fillInBlank.Explanation,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to insert fill in blank: %v", err)
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %v", err)
+	}
+
+	return nil
+}

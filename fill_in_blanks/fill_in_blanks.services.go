@@ -25,3 +25,11 @@ func createFillInBlankDeckSessionService(db *sql.DB, id string, deckId string, u
 func createFillInBlankScoreService(db *sql.DB, userId string, fillInBlankId string, score float64, sessionId string) error {
 	return createFillInBlankScore(db, userId, fillInBlankId, score, sessionId)
 }
+
+func createFillInBlankDeckService(db *sql.DB, title string, description string, userId string) (FillInBlankDeck, error) {
+	return createFillInBlankDeck(db, title, description, userId)
+}
+
+func createFillInBlanksService(db *sql.DB, request CreateFillInBlanksRequest) error {
+	return createFillInBlanks(db, request.DeckId, request.FillInBlanks)
+}
