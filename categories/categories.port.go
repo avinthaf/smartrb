@@ -17,6 +17,10 @@ func GetCategoriesByIds(categoryIds []string, db *sql.DB) ([]Category, error) {
 	return getCategoriesByIdsService(categoryIds, db)
 }
 
+func GetCategoriesByName(categoryNames []string, db *sql.DB) ([]Category, error) {
+	return getCategoriesByNameService(categoryNames, db)
+}
+
 func GetProductCategoriesByProductId(productId string, db *sql.DB) ([]ProductCategory, error) {
 	return getProductCategoriesByProductIdService(productId, db)
 }
@@ -27,4 +31,8 @@ func GetProductCategoriesByProductIds(productIds []string, db *sql.DB) ([]Produc
 
 func CreateProductCategory(db *sql.DB, productID string, categoryID string) error {
 	return createProductCategoryService(db, productID, categoryID)
+}
+
+func CreateProductCategories(db *sql.DB, productID string, categoryIDs []string) error {
+	return createProductCategoriesService(db, productID, categoryIDs)
 }

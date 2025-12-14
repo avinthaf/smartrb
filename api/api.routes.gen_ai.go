@@ -36,7 +36,7 @@ func handleFlashcardsGenAIPrompt(c *gin.Context) {
 	// Prepare context for AI service
 	categoriesContext := "Available categories: "
 	for _, cat := range categories {
-		categoriesContext += fmt.Sprintf("%s (%s), ", cat.Name, cat.Description)
+		categoriesContext += fmt.Sprintf("%s (%s) - ID: %s, ", cat.Name, cat.Description, cat.Id)
 	}
 
 	// Call the AI service with context

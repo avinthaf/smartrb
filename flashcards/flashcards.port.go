@@ -28,6 +28,7 @@ type CreateFlashcardDeckRequest struct {
 	UserId      string      `json:"user_id"`
 	PublishStatus string    `json:"publish_status"`
 	Flashcards  []Flashcard `json:"flashcards,omitempty"`
+	CategoryIds  []string    `json:"categoryIds"` // IDs of categories - changed from category_ids to categoryIds
 }
 
 type CreateFlashcardsRequest struct {
@@ -51,8 +52,8 @@ func GetFlashcardScoresBySessionId(db *sql.DB, sessionId string) ([]FlashcardSco
 	return getFlashcardScoresBySessionIdService(db, sessionId)
 }
 
-func CreateFlashcardDeck(db *sql.DB, title string, description string, userId string, publishStatus string) (FlashcardDeck, error) {
-	return createFlashcardDeckService(db, title, description, userId, publishStatus)
+func CreateFlashcardDeck(db *sql.DB, title string, description string, userId string) (FlashcardDeck, error) {
+	return createFlashcardDeckService(db, title, description, userId)
 }
 
 func CreateFlashcards(db *sql.DB, request CreateFlashcardsRequest) error {

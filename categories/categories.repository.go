@@ -152,6 +152,59 @@ func getCategoriesByIds(categoryIds []string, db *sql.DB) ([]Category, error) {
 	return categories, nil
 }
 
+func getCategoriesByName(categoryNames []string, db *sql.DB) ([]Category, error) {
+	// Convert string slice to postgres array format
+	placeholders := make([]string, len(categoryNames))
+	args := make([]interface{}, len(categoryNames))
+
+	for i, name := range categoryNames {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = name
+	}
+
+	query := fmt.Sprintf(`
+        SELECT 
+            id, 
+            name, 
+            description, 
+            COALESCE(image_url, '') as image_url, 
+            created_at, 
+            updated_at 
+        FROM categories 
+        WHERE name IN (%s)`, strings.Join(placeholders, ","))
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+
+		err := rows.Scan(
+			&category.Id,
+			&category.Name,
+			&category.Description,
+			&category.ImageUrl,
+			&category.CreatedAt,
+			&category.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		categories = append(categories, category)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
+
 func getProductCategoriesByProductId(productId string, db *sql.DB) ([]ProductCategory, error) {
 	query := `
         SELECT 
@@ -240,7 +293,7 @@ func getProductCategoriesByProductIds(productIds []string, db *sql.DB) ([]Produc
 
 func createProductCategory(db *sql.DB, productID string, categoryID string) error {
 	query := `
-        INSERT INTO product_categories (product_id, category_id, created_at, updated_at)
+        INSERT INTO product_categories (product_id, category_id)
         VALUES ($1, $2, NOW(), NOW())`
 
 	_, err := db.Exec(query, productID, categoryID)
@@ -249,3 +302,31 @@ func createProductCategory(db *sql.DB, productID string, categoryID string) erro
 	}
 	return nil
 }
+
+func createProductCategories(db *sql.DB, productID string, categoryIDs []string) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %v", err)
+	}
+	defer tx.Rollback()
+
+	query := `
+        INSERT INTO product_categories (product_id, category_id)
+        VALUES ($1, $2)`
+
+	for _, categoryID := range categoryIDs {
+		_, err := tx.Exec(query, productID, categoryID)
+		if err != nil {
+			return fmt.Errorf("failed to create product category: %v", err)
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("failed to commit transaction: %v", err)
+	}
+	
+	return nil
+}
+
+

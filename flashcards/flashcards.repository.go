@@ -256,15 +256,15 @@ func getFlashcardScoresBySessionId(db *sql.DB, sessionId string) ([]FlashcardSco
 	return scores, nil
 }
 
-func createFlashcardDeck(db *sql.DB, title string, description string, userId string, publishStatus string) (FlashcardDeck, error) {
+func createFlashcardDeck(db *sql.DB, title string, description string, userId string) (FlashcardDeck, error) {
 	query := `
-        INSERT INTO flashcard_decks (title, description, user_id, publish_status_id)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO flashcard_decks (title, description, user_id)
+        VALUES ($1, $2, $3)
         RETURNING id, title, description, user_id, publish_status_id, created_at, updated_at
     `
 	
 	var deck FlashcardDeck
-	err := db.QueryRow(query, title, description, userId, publishStatus).Scan(
+	err := db.QueryRow(query, title, description, userId).Scan(
 		&deck.Id,
 		&deck.Title,
 		&deck.Description,

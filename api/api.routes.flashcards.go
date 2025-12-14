@@ -263,7 +263,7 @@ func handleCreateFlashcardDeck(c *gin.Context) {
 		return
 	}
 
-	flashcardDeck, err := flashcards.CreateFlashcardDeck(db.Default(), user.Id, deckReq.Title, deckReq.Description, deckReq.PublishStatus)
+	flashcardDeck, err := flashcards.CreateFlashcardDeck(db.Default(), deckReq.Title, deckReq.Description, user.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Failed to create flashcard deck",
@@ -272,15 +272,15 @@ func handleCreateFlashcardDeck(c *gin.Context) {
 		return
 	}
 
-	// Create entry in product_categories table
-	// err = categories.CreateProductCategory(db.Default(), flashcardDeck.Id, "flashcard_deck")
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error":   "Failed to create product category entry",
-	// 		"details": err.Error(),
-	// 	})
-	// 	return
-	// }
+	//Create entry in product_categories table
+	err = categories.CreateProductCategories(db.Default(), flashcardDeck.Id, deckReq.CategoryIds)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create product category entry",
+			"details": err.Error(),
+		})
+		return
+	}
 
 	// Create flashcards if provided
 	if len(deckReq.Flashcards) > 0 {
