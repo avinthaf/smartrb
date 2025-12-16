@@ -19,6 +19,7 @@ import (
 	_ "smartrb.com/flashcards"
 	_ "smartrb.com/fill_in_blanks"
 	_ "smartrb.com/gen_ai"
+	_ "smartrb.com/products"
 )
 
 func main() {

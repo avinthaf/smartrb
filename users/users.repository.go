@@ -30,6 +30,9 @@ func getUserByExternalId(externalId string, db *sql.DB) (User, error) {
 	
 	err := db.QueryRow(query, externalId).Scan(&user.Id, &user.Email, &user.ExternalId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return User{}, fmt.Errorf("user not found")
+		}
 		return User{}, fmt.Errorf("error getting user by external id: %v", err)
 	}
 

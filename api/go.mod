@@ -20,6 +20,7 @@ require (
 	smartrb.com/gen_ai v0.0.0-00010101000000-000000000000
 	smartrb.com/interests v0.0.0-00010101000000-000000000000
 	smartrb.com/mq v0.0.0-00010101000000-000000000000
+	smartrb.com/products v0.0.0-00010101000000-000000000000
 	smartrb.com/users v0.0.0-00010101000000-000000000000
 )
 
@@ -93,3 +94,5 @@ replace smartrb.com/flashcards => ../flashcards
 replace smartrb.com/fill_in_blanks => ../fill_in_blanks
 
 replace smartrb.com/gen_ai => ../gen_ai
+
+replace smartrb.com/products => ../products

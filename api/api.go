@@ -98,6 +98,9 @@ func StartAPI() {
 		protected.POST("/gen_ai/prompt/flashcards", handleFlashcardsGenAIPrompt)
 		protected.POST("/gen_ai/prompt/fill_in_blanks", handleFillInBlanksGenAIPrompt)
 
+		// Product Routes
+		protected.POST("/products/ratings", handleCreateProductRating)
+
 	}
 
 	router.Run(":8080")
