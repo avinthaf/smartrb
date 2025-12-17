@@ -23,6 +23,22 @@ func createUser(email string, externalId string, db *sql.DB, mqCallback MqCallba
 	}, nil
 }
 
+func updateUser(userId string, firstName string, lastName string, db *sql.DB) (User, error) {
+	user := User{}
+	
+	query := "UPDATE users SET first_name = $1, last_name = $2, updated_at = NOW() WHERE id = $3 RETURNING id, email, external_id, created_at, updated_at"
+	
+	err := db.QueryRow(query, firstName, lastName, userId).Scan(&user.Id, &user.Email, &user.ExternalId, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return User{}, fmt.Errorf("user not found")
+		}
+		return User{}, fmt.Errorf("error updating user: %v", err)
+	}
+
+	return user, nil
+}
+
 func getUserByExternalId(externalId string, db *sql.DB) (User, error) {
 	user := User{}
 	

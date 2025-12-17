@@ -62,6 +62,9 @@ func StartAPI() {
 		// Auth routes
 		// protected.GET("/login/checks", handlePostLoginChecks)
 
+		// Users Routes
+		protected.PUT("/users", handleUpdateUser)
+
 		// Categories Routes
 		protected.GET("/categories/primary", handleGetPrimaryCategories)
 
